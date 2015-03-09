@@ -12,3 +12,8 @@ advantage of this by searching disk and process memory for strings resembling ht
 resources, domain names and IP addresses. Smudge's purpose is to point out anomalies
  and shed light on suspicious files and processes. Smudge leaves judgement of what
 is malware up to the operator.
+
+Release Binaries: 
+-----------------
+* [smudge.exe](https://github.com/NickStephens/smudge/raw/master/release/smudge.exe)
+* [smudge64.exe](https://github.com/NickStephens/smudge/raw/master/release/smudge64.exe)
