@@ -5,8 +5,6 @@
 #include <getopt.h>
 #include "smudge.h"
 
-#define BASEDIR "C:\\"
-
 unsigned suspicious = 0;
 unsigned count = 0;
 
@@ -26,7 +24,8 @@ int disableIPSearch = 0;
 int enableAllTLDs = 0;
 int processArchival = 0;
 int aggressive = 0;
-char outFile[MAX_PATH];
+char baseDir[MAX_PATH] = {0};
+char outFile[MAX_PATH] = {0};
 
 void banner(void)
 {
@@ -167,7 +166,8 @@ int searchPath(LPCTSTR start)
 
 void searchDisk()
 {
-	searchPath(BASEDIR);	
+	printf("[+] starting disk search starting from %s\n", baseDir);
+	searchPath(baseDir);
 }
 
 
@@ -196,11 +196,12 @@ void usage()
 {
 	printf("\t-xd\texclude disk searching\n");
 	printf("\t-xm\texclude memory searching\n");
+	printf("\t-a\taggressive scanning, search more than the first page of memory for every region in each process, this often isn't necessary\n");
 	printf("\t-dd\tdisable domain seach\n");
 	printf("\t-du\tdisable url seach\n");
 	printf("\t-di\tdisable ip seach\n");
 	printf("\t-tld\tenable searching of uncommon TLDs\n");
-	printf("\t-a\taggressive scanning, search more than the first page of memory for every region in each process, this often isn't necessary\n");
+	printf("\t-dir <dir>\tperform disk search starting from <dir>\n");
 	printf("\t-v\tbe verbose\n");
 	printf("\t-o <file>\tlog results to <file>\n");
 	printf("\t-h\tshow this help\n");
@@ -241,6 +242,9 @@ int main(int argc, char **argv)
 		if (!strcmp(argv[ac], "-o"))
 			if ((++ac) < argc)
 				strncpy(outFile, argv[ac], sizeof(outFile));
+		if (!strcmp(argv[ac], "-dir"))
+			if ((++ac) < argc)
+				strncpy(baseDir, argv[ac], sizeof(baseDir));
 	}	
 
 	if (!excludeDisk)
