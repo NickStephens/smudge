@@ -58,6 +58,11 @@ int isValidDomain(char *str)
 {
 	char *lastdot = NULL;
 
+	/* no results of the type <emptystring>.<tld> */
+	if (*str == '.')
+		if (isValidTLD(str+1))
+			return 0;
+
 	/* iterate through the string search for a '.' */
 	while(*str)
 	{
