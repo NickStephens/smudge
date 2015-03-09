@@ -249,10 +249,10 @@ int main(int argc, char **argv)
 				strncpy(baseDir, argv[ac], sizeof(baseDir));
 	}	
 
-	if (!excludeDisk)
-		searchDisk();
 	if (!excludeMemory)
 		searchMemory();
+	if (!excludeDisk)
+		searchDisk();
 
 	cleanup();
 }	
