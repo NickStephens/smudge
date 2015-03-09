@@ -182,6 +182,8 @@ void initialize()
 	memset(wideStringBason, 0, wideStringBasonSz);
 
 	memset(outFile, 0, sizeof(outFile));
+
+	strncpy(baseDir, "C:\\WINDOWS\\", sizeof(baseDir));
 }
 
 void cleanup()
@@ -201,7 +203,7 @@ void usage()
 	printf("\t-du\tdisable url seach\n");
 	printf("\t-di\tdisable ip seach\n");
 	printf("\t-tld\tenable searching of uncommon TLDs\n");
-	printf("\t-dir <dir>\tperform disk search starting from <dir>\n");
+	printf("\t-dir <dir>\tperform disk search starting from <dir>, default is C:\\WINDOWS\\\n");
 	printf("\t-v\tbe verbose\n");
 	printf("\t-o <file>\tlog results to <file>\n");
 	printf("\t-h\tshow this help\n");
