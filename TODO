@@ -1,0 +1,5 @@
+* Add detection for other persistence methods
+* Do smart printing of process discoveries
+* Implement output file feature
+* Implement Per-process string dump file
+* Review options and remove those unimplemented
