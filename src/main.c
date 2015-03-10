@@ -28,8 +28,8 @@ int showCommonNoise = 0;
 void banner(void)
 {
 
-	printf("\t.:SMUDGE:.\n"); 
-	printf("\t- discover hardcoded internet resources on disk and in memory\n");
+	printf(".:SMUDGE:.\n"); 
+	printf("- discover hardcoded internet resources on disk and in memory\n");
 	printf("\n");
 }
 
