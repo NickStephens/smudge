@@ -136,7 +136,7 @@ int isValidIp(char *str)
 	o3 = atoi(oct3);
 	o4 = atoi(oct4);
 
-	if ((o1 > 0) && (o2 < 256))
+	if ((o1 > 0) && (o1 < 256))
 		if ((o2 >= 0) && (o2 <= 256))
 			if ((o3 >= 0) && (o3 <= 256))
 				if ((o4 >= 0) && (o4 <= 256))
