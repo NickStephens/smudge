@@ -2,7 +2,6 @@
 #include <windows.h>
 #include <io.h>
 #include <fcntl.h>
-#include <getopt.h>
 #include "smudge.h"
 
 unsigned suspicious = 0;
