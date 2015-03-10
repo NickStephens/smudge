@@ -17,3 +17,4 @@ Release Binaries:
 -----------------
 * [smudge.exe](https://github.com/NickStephens/smudge/raw/master/release/smudge.exe)
 * [smudge64.exe](https://github.com/NickStephens/smudge/raw/master/release/smudge64.exe)
+* [source tarball](https://github.com/NickStephens/smudge/raw/master/release/smudge.tar.gz)
