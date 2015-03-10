@@ -1,3 +1,4 @@
+* Fix VBox Infinite Loop
 * Add detection for other persistence methods
 * Do smart printing of process discoveries
 * Implement output file feature
