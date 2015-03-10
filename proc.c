@@ -133,16 +133,12 @@ void searchProc(DWORD procId, HANDLE hProc)
 				sizeof(procName)/sizeof(TCHAR));
 		}
 		else {
-			if (verbose)
+			if (!image_warned)
 			{
-				if (!image_warned)
-				{
-					printf("failed to read image name of [%d]\n", procId);
-					printf("this is likely because smudge was compiled as a 32bit executable, you'll need a 64bit executable to query this processes's name.\n");
-					image_warned++;
-				}
+				printf("failed to read image name of [%d]\n", procId);
+				printf("this is likely because smudge was compiled as a 32bit executable, you'll need a 64bit executable to query this processes's name.\n");
+				image_warned++;
 			}
-		
 		}
 	}
 
@@ -161,7 +157,9 @@ void searchProc(DWORD procId, HANDLE hProc)
 		else
 		{
 			if (mbi.State == MEM_COMMIT)
+			{
 				searchRegion(hProc, mbi.BaseAddress, mbi.RegionSize);
+			}
 			lpMem = (LONG)(mbi.BaseAddress + mbi.RegionSize);
 		}
 	}
