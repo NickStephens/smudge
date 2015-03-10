@@ -30,8 +30,6 @@ int isValidTLD(char *tld)
 		return 0;	
 	}
 	
-	//strncpy(temp, tld, strlen(tld));
-
 	tp = temp;
 	while(*tp)
 	{
@@ -61,6 +59,10 @@ int isValidDomain(char *str)
 	/* no results of the type <emptystring>.<tld> */
 	if (*str == '.')
 		if (isValidTLD(str+1))
+			return 0;
+
+	if (!showCommonNoise)
+		if (!strcmp(str, "w.com") || !strcmp(str, "command.com"))
 			return 0;
 
 	/* iterate through the string search for a '.' */
@@ -135,6 +137,22 @@ int isValidIp(char *str)
 	o2 = atoi(oct2);
 	o3 = atoi(oct3);
 	o4 = atoi(oct4);
+
+	/* filter common results that often aren't indicative of anything */
+	if (!showCommonNoise)
+	{		
+		/* localhost */
+		if (o1 == 127 && o2 == 0 && o3 == 0 && o4 == 1)	
+			return 0;
+
+		/* broadcast address */
+		if (o1 == 255 && o2 == 255 && o3 == 255 && o4 == 255)
+			return 0;
+
+		/* common version numbers */
+		if (o1 == 2 && o2 == 5 && ((o3 == 4)||(o3 == 29)))
+			return 0;
+	}	
 
 	if ((o1 > 0) && (o1 < 256))
 		if ((o2 >= 0) && (o2 <= 256))

@@ -23,6 +23,7 @@ int disableIPSearch = 0;
 int enableAllTLDs = 0;
 int processArchival = 0;
 int aggressive = 0;
+int showCommonNoise = 0;
 
 void banner(void)
 {
@@ -56,16 +57,17 @@ void cleanup()
 
 void usage()
 {
-	printf("\t-xd\texclude disk searching\n");
-	printf("\t-xm\texclude memory searching\n");
-	printf("\t-a\taggressive scanning, search more than the first page of memory for every region in each process, this often isn't necessary\n");
-	printf("\t-dd\tdisable domain seach\n");
-	printf("\t-du\tdisable url seach\n");
-	printf("\t-di\tdisable ip seach\n");
-	printf("\t-tld\tenable searching of uncommon TLDs\n");
-	printf("\t-dir <dir>\tperform disk search starting from <dir>, default is C:\\WINDOWS\\\n");
-	printf("\t-v\tbe verbose\n");
-	printf("\t-h\tshow this help\n");
+	printf("\t-xd\t\texclude disk searching\n");
+	printf("\t-xm\t\texclude memory searching\n");
+	printf("\t-dd\t\tdisable domain seach\n");
+	printf("\t-du\t\tdisable url seach\n");
+	printf("\t-di\t\tdisable ip seach\n");
+	printf("\t-a\t\taggressive scanning\n");
+	printf("\t-sc\t\tshow common noise\n");
+	printf("\t-tld\t\tenable searching of uncommon TLDs\n");
+	printf("\t-dir <dir>\tperform disk search starting from <dir>, default C:\\WINDOWS\\\n");
+	printf("\t-v\t\tbe verbose\n");
+	printf("\t-h\t\tshow this help\n");
 }
 
 int main(int argc, char **argv)
@@ -91,7 +93,9 @@ int main(int argc, char **argv)
 			disableIPSearch = 1;
 		if (!strcmp(argv[ac], "-tld"))
 			enableAllTLDs = 1;
-		if (!strcmp(argv[ac], "-a"))
+		if (!strcmp(argv[ac], "-sc"))
+			showCommonNoise = 1;
+		if (!strcmp(argv[ac], "-a")) // aggressive scanning, search more than the first page of memory for every region in each process, this often isn't necessary
 			aggressive = 1;
 		if (!strcmp(argv[ac], "-pa"))
 			processArchival = 1;

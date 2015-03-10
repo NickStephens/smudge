@@ -16,4 +16,5 @@ int disableIPSearch;
 int enableAllTLDs;
 int processArchival;
 int aggressive;
+int showCommonNoise;
 char baseDir[MAX_PATH];
