@@ -149,8 +149,12 @@ int isValidIp(char *str)
 		if (o1 == 255 && o2 == 255 && o3 == 255 && o4 == 255)
 			return 0;
 
+		/* network identifiers */
+		if (o4 == 0)
+			return 0;
+
 		/* common version numbers */
-		if (o1 == 2 && o2 == 5 && ((o3 == 4)||(o3 == 29)))
+		if (o1 == 2 && o2 == 5) //  && ((o3 == 4)||(o3 == 29)))
 			return 0;
 	}	
 
