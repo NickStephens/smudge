@@ -59,7 +59,7 @@ int searchFile(LPCTSTR filename)
 				{
 					if (occurences == 0)
 						printf("[!] found something in file \"%s\"\n", filename);
-					printf("%s\n", stringBason);
+					printf("  %s\n", stringBason);
 					occurences++;
 				}
 				free(temp);

@@ -39,7 +39,7 @@ int scanMemory(void *memory, size_t sz)
 				strncpy(temp, stringBason, basonidx+1);
 				if (isResource(temp))
 				{
-					printf("%s\n", stringBason);
+					printf("  %s\n", stringBason);
 				}
 				free(temp);
 			}
