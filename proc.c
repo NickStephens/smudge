@@ -98,7 +98,6 @@ int searchRegion(HANDLE hProc, void *baseAddr, size_t sz)
 	unsigned i;
 	int result = 0;
 
-	//printf("%lx : %dk\n", baseAddr, sz / 0x1000);
 	if (aggressive)
 	{
 		for(i=0;i<(sz/MEM_INCREMENT);i++)
@@ -120,7 +119,7 @@ void searchProc(DWORD procId, HANDLE hProc)
 	HMODULE hMod;	
 	DWORD cbNeeded;
 	SYSTEM_INFO si;
-	LONG lpMem;
+	uintptr_t lpMem;
 	MEMORY_BASIC_INFORMATION mbi;
 	SIZE_T mibSz;
 
@@ -149,10 +148,12 @@ void searchProc(DWORD procId, HANDLE hProc)
 
 	while(((void *)lpMem) < si.lpMaximumApplicationAddress)
 	{
-		mibSz = VirtualQueryEx(hProc, (LPCVOID) lpMem, &mbi, sizeof(MEMORY_BASIC_INFORMATION));
+		mibSz = VirtualQueryEx(hProc, (void *)lpMem, &mbi, sizeof(MEMORY_BASIC_INFORMATION));
 		if (mibSz != sizeof(MEMORY_BASIC_INFORMATION))
 		{
-			lpMem += 0x1000;
+			/* this will only fail if we're scanning a 32bit process while smudge is running in 64bit mode */
+			/* if it fails return, because we hit the end of the 32bit process's addresses space */
+			return;
 		}
 		else
 		{
@@ -160,7 +161,7 @@ void searchProc(DWORD procId, HANDLE hProc)
 			{
 				searchRegion(hProc, mbi.BaseAddress, mbi.RegionSize);
 			}
-			lpMem = (LONG)(mbi.BaseAddress + mbi.RegionSize);
+			lpMem = (uintptr_t)(mbi.BaseAddress + mbi.RegionSize);
 		}
 	}
 
