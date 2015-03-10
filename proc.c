@@ -10,7 +10,35 @@ DWORD basonidx = 0;
 int warned = 0;
 int image_warned = 0;
 
-int scanMemory(void *memory, size_t sz)
+unsigned int procOccurences;
+
+void printProcessInfo(HANDLE hProc)
+{
+	TCHAR procName[MAX_PATH] = {0};
+	HMODULE hMod;	
+	DWORD cbNeeded;
+
+	if (hProc != NULL)
+	{
+		if (EnumProcessModules(hProc, &hMod, sizeof(hMod), &cbNeeded))
+		{
+			GetModuleBaseName(hProc, hMod, procName, 
+				sizeof(procName)/sizeof(TCHAR));
+		}
+		else {
+			if (!image_warned)
+			{
+				printf("failed to read image name of [%d]\n", GetProcessId(hProc));
+				printf("this is likely because smudge was compiled as a 32bit executable, you'll need a 64bit executable to query this processes's name.\n");
+				image_warned++;
+			}
+		}
+	}
+
+	printf("[!] Process %d (%s)\n", GetProcessId(hProc), procName);
+}
+
+int scanMemory(HANDLE hProc, void *memory, size_t sz)
 {
 	size_t cnt;
 	char cimd;
@@ -39,7 +67,10 @@ int scanMemory(void *memory, size_t sz)
 				strncpy(temp, stringBason, basonidx+1);
 				if (isResource(temp))
 				{
+					if (!procOccurences)
+						printProcessInfo(hProc);
 					printf("  %s\n", stringBason);
+					procOccurences++;
 				}
 				free(temp);
 			}
@@ -86,7 +117,7 @@ int prepareAndScan(HANDLE hProc, void *baseAddr, size_t sz)
 		printf("[-] read less bytes than attempted %d\n", nRead);
 	}
 
-	result = scanMemory(dest, nRead);
+	result = scanMemory(hProc, dest, nRead);
 
 	VirtualFree(dest, 0, MEM_RELEASE);
 
@@ -113,35 +144,15 @@ int searchRegion(HANDLE hProc, void *baseAddr, size_t sz)
 	return result;
 }
 
-void searchProc(DWORD procId, HANDLE hProc)
+void searchProc(HANDLE hProc)
 {
-	TCHAR procName[MAX_PATH] = {0};
-	HMODULE hMod;	
-	DWORD cbNeeded;
 	SYSTEM_INFO si;
 	uintptr_t lpMem;
 	MEMORY_BASIC_INFORMATION mbi;
 	SIZE_T mibSz;
 
-
-	if (hProc != NULL)
-	{
-		if (EnumProcessModules(hProc, &hMod, sizeof(hMod), &cbNeeded))
-		{
-			GetModuleBaseName(hProc, hMod, procName, 
-				sizeof(procName)/sizeof(TCHAR));
-		}
-		else {
-			if (!image_warned)
-			{
-				printf("failed to read image name of [%d]\n", procId);
-				printf("this is likely because smudge was compiled as a 32bit executable, you'll need a 64bit executable to query this processes's name.\n");
-				image_warned++;
-			}
-		}
-	}
-
-	printf("Process [%d] (%s)\n", procId, procName);
+	/* zero procOccurences to make alerts possible */
+	procOccurences = 0;
 
 	GetSystemInfo(&si);
 	lpMem = 0;
@@ -184,7 +195,7 @@ void analyzeProcess(DWORD processId)
 		}
 	}
 	else
-		searchProc(processId, hProc);
+		searchProc(hProc);
 
 	CloseHandle(hProc);
 }
