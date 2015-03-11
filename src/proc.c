@@ -1,14 +1,18 @@
 #include <windows.h>
 #include <stdio.h>
 #include <tchar.h>
+#include <wchar.h>
 #include <psapi.h>
 #include "smudge.h"
 
 #define MEM_INCREMENT 0x1000
 
 DWORD basonidx = 0;
+DWORD wideBasonIdx = 0;
 int warned = 0;
 int image_warned = 0;
+
+DWORD currentProcId = 0;
 
 unsigned int procOccurences;
 
@@ -28,14 +32,65 @@ void printProcessInfo(HANDLE hProc)
 		else {
 			if (!image_warned)
 			{
-				printf("failed to read image name of [%d]\n", GetProcessId(hProc));
+				printf("failed to read image name of [%d]\n", currentProcId);
 				printf("this is likely because smudge was compiled as a 32bit executable, you'll need a 64bit executable to query this processes's name.\n");
 				image_warned++;
 			}
 		}
 	}
 
-	printf("[!] Process %d (%s)\n", GetProcessId(hProc), procName);
+	printf("[!] Process %d (%s)\n", currentProcId, procName);
+}
+
+/* POC Wide String scanning. I know this is inefficient. */
+int scanMemoryWide(HANDLE hProc, void *memory, size_t sz)
+{
+	size_t cnt;
+	wchar_t cimd;
+	char *temp;
+
+	wchar_t *s = memory;
+	memset(wideStringBason, 0, wideStringBasonSz);
+	for(cnt=0;cnt<(sz/2);cnt++) 
+	{
+		cimd = s[cnt];
+		if ((cimd >= 0x21) && (cimd <= 0x7e))
+		{
+			wideStringBason[wideBasonIdx++] = cimd;
+		}
+		else
+		{
+			wideStringBason[wideBasonIdx] = 0;
+			if (wideBasonIdx > 0)
+			{
+				temp = convertToAnsi(wideStringBason);
+				if (temp == NULL)
+					return 0;
+
+				if (isResource(temp))
+				{
+					if (!procOccurences)
+						printProcessInfo(hProc);
+					wprintf(L"  %ls\n", wideStringBason);
+					procOccurences++;
+				}
+				free(temp);
+			}
+			memset(wideStringBason, 0, wideBasonIdx);
+			wideBasonIdx= 0;
+		}
+		if ((wideBasonIdx*sizeof(wchar_t)) == wideStringBasonSz)
+		{
+			wideStringBasonSz *= 2;
+			wideStringBason = realloc(wideStringBason, wideStringBasonSz);
+			if (wideStringBason == NULL)
+			{
+				print_error("[-] realloc");
+				ExitProcess(1);
+			}
+		}
+	}
+	return 0;
 }
 
 int scanMemory(HANDLE hProc, void *memory, size_t sz)
@@ -94,7 +149,7 @@ int scanMemory(HANDLE hProc, void *memory, size_t sz)
 int prepareAndScan(HANDLE hProc, void *baseAddr, size_t sz)
 {
 	void *dest;
-	int result;
+	int result = 0;
 	SIZE_T nRead;
 
 	dest = VirtualAlloc(NULL, sz, MEM_COMMIT, PAGE_READWRITE);
@@ -118,6 +173,7 @@ int prepareAndScan(HANDLE hProc, void *baseAddr, size_t sz)
 	}
 
 	result = scanMemory(hProc, dest, nRead);
+	result |= scanMemoryWide(hProc, dest, nRead);
 
 	VirtualFree(dest, 0, MEM_RELEASE);
 
@@ -245,6 +301,7 @@ int searchMemory(void)
 	{
 		if ((aProcesses[i] != 0) && (aProcesses[i] != GetCurrentProcessId()))
 		{
+			currentProcId = aProcesses[i];
 			analyzeProcess(aProcesses[i]);	
 		}
 	}

@@ -4,6 +4,30 @@
 #include "tlds.h"
 
 
+char *convertToAnsi(wchar_t *in)
+{
+	char *out;
+	char *tout;
+
+	out = malloc(wcslen(in)+1);
+	if (out == NULL)	
+	{
+		print_error("[-] malloc");
+		return NULL;
+	}
+	memset(out, 0, wcslen(in)+1);
+
+	tout = out;
+	while(*in)
+	{
+		*tout = (char) *in;
+		tout++; in++;
+	}
+	tout[wcslen(in)] = 0;
+
+	return out;
+}
+
 int inArray(char *needle, char **haystack)
 {
 	while(*haystack)
