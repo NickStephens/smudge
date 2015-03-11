@@ -164,6 +164,7 @@ int prepareAndScan(HANDLE hProc, void *baseAddr, size_t sz)
 		// somehow we got a bad page, just skip it
 
 		// and we're no longer contiguous
+		wideBasonIdx = 0;
 		basonidx = 0;
 		return 0;
 	}
