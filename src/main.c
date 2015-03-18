@@ -57,7 +57,7 @@ void cleanup()
 
 void usage()
 {
-	printf("\t-xd\t\texclude disk searching\n");
+	printf("\t-id\t\tinclude disk searching\n");
 	printf("\t-xm\t\texclude memory searching\n");
 	printf("\t-dd\t\tdisable domain seach\n");
 	printf("\t-du\t\tdisable url seach\n");
@@ -79,8 +79,9 @@ int main(int argc, char **argv)
 
 	for(ac=1;ac<argc;ac++)
 	{
-		if (!strcmp(argv[ac], "-xd"))
-			excludeDisk = 1;
+		excludeDisk = 1;
+		if (!strcmp(argv[ac], "-id"))
+			excludeDisk = 0;
 		if (!strcmp(argv[ac], "-xm"))
 			excludeMemory = 1;
 		if (!strcmp(argv[ac], "-v"))
