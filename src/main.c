@@ -15,7 +15,7 @@ DWORD stringBasonSz = 0;
 
 /* options */
 int verbose = 0;
-int excludeDisk = 0;
+int excludeDisk = 1;
 int excludeMemory = 0;
 int disableDomainSearch = 0;
 int disableURLSearch = 0;
